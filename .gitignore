@@ -1,0 +1,75 @@
+# Dependencies
+node_modules/
+.npm
+.yarn-integrity
+
+# Build outputs
+dist/
+out/
+release/
+*.exe
+*.dmg
+*.AppImage
+*.snap
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# Electron
+app/
+build/
+dist/
+release/
+*.exe
+*.dmg
+*.AppImage
+*.snap
+
+# TypeScript
+*.tsbuildinfo
+
+# Vite cache
+.vite/
+
+# Tailwind CSS
+*.css.map

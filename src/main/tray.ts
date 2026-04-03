@@ -1,12 +1,27 @@
-import { Tray, Menu, BrowserWindow, app } from 'electron'
+import { Tray, Menu, BrowserWindow, app, nativeImage } from 'electron'
 import path from 'path'
-import { fileURLToPath } from 'url'
+import fs from 'fs'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+export function createTray(mainWindow: BrowserWindow): Tray | null {
+  // 图标路径
+  const iconPath = path.join(__dirname, '../../public/tray-icon.png')
 
-export function createTray(mainWindow: BrowserWindow): Tray {
-  // 创建托盘图标
-  const tray = new Tray(path.join(__dirname, '../../public/tray-icon.png'))
+  let tray: Tray
+
+  try {
+    if (fs.existsSync(iconPath)) {
+      // 使用自定义图标
+      tray = new Tray(iconPath)
+    } else {
+      // 创建默认的空白图标（16x16）
+      const emptyIcon = nativeImage.createEmpty()
+      tray = new Tray(emptyIcon)
+      console.warn('Tray icon not found, using empty icon')
+    }
+  } catch (error) {
+    console.error('Failed to create tray icon:', error)
+    return null
+  }
 
   // 托盘菜单
   const contextMenu = Menu.buildFromTemplate([
@@ -75,7 +90,7 @@ export function createTray(mainWindow: BrowserWindow): Tray {
     {
       label: '退出',
       click: () => {
-        app.isQuiting = true
+        (app as any).isQuiting = true
         app.quit()
       }
     }

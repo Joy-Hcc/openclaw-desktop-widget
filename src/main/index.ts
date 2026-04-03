@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain } from 'electron'
+import { app, BrowserWindow, Tray, Menu, globalShortcut, ipcMain, dialog } from 'electron'
 import path from 'path'
 import { createWindow } from './window'
 import { createTray } from './tray'
@@ -35,7 +35,7 @@ app.whenReady().then(() => {
 
   // 处理窗口关闭事件（隐藏到托盘而不是退出）
   mainWindow.on('close', (event) => {
-    if (!app.isQuiting) {
+    if (!(app as any).isQuiting) {
       event.preventDefault()
       mainWindow.hide()
     }
@@ -43,7 +43,7 @@ app.whenReady().then(() => {
 
   // 处理应用退出
   app.on('before-quit', () => {
-    app.isQuiting = true
+    (app as any).isQuiting = true
     globalShortcut.unregisterAll()
   })
 
@@ -89,4 +89,42 @@ ipcMain.on('set-always-on-top', (event, alwaysOnTop: boolean) => {
   if (window) {
     window.setAlwaysOnTop(alwaysOnTop)
   }
+})
+
+// 窗口控制
+ipcMain.on('minimize-window', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (window) {
+    window.minimize()
+  }
+})
+
+ipcMain.on('close-window', (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (window) {
+    window.close()
+  }
+})
+
+// 文件系统
+ipcMain.handle('select-file', async (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) return null
+
+  const result = await dialog.showOpenDialog(window, {
+    properties: ['openFile']
+  })
+
+  return result.canceled ? null : result.filePaths[0]
+})
+
+ipcMain.handle('select-folder', async (event) => {
+  const window = BrowserWindow.fromWebContents(event.sender)
+  if (!window) return null
+
+  const result = await dialog.showOpenDialog(window, {
+    properties: ['openDirectory']
+  })
+
+  return result.canceled ? null : result.filePaths[0]
 })
